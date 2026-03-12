@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLP Test Automation - API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid #e1e8ed;
+        }
+        
+        .auth-info-section {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            opacity: 1;
+            max-height: 200px;
+            overflow: hidden;
+        }
+        
+        .auth-info-section.hiding {
+            opacity: 0;
+            transform: translateY(-20px);
+            max-height: 0;
+            padding: 0 30px;
+            margin-bottom: 0;
+            border-bottom-width: 0;
+        }
+        
+        .auth-info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .auth-info-content {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .form-section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .form-input, .form-select {
+            padding: 12px 16px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-input.required, .form-select.required {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .form-input.optional {
+            border-left: 4px solid #28a745;
+        }
+        
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .form-select option {
+            padding: 8px;
+        }
+        
+        .file-type-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .file-type-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .file-type-options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .file-type-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .file-type-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .file-type-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .file-type-radio {
+            margin: 0;
+        }
+        
+        .file-type-label {
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .file-input-group {
+            position: relative;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border: 2px dashed #ced4da;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .file-input-label:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        
+        .file-input-label.has-file {
+            border-color: #28a745;
+            background: #e8f5e8;
+            border-style: solid;
+        }
+        
+        .file-input-info {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+        
+        .file-input-info.excel-info {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .button-section {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            min-width: 160px;
+            justify-content: center;
+            margin: 0 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+        
+        .btn-warning:hover:not(:disabled) {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #adb5bd !important;
+            color: white !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .status-section {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .status-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+        
+        .status-content {
+            padding: 30px;
+        }
+        
+        .status-indicator {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-left: 4px solid;
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .status-indicator.info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            border-left-color: #2196f3;
+        }
+        
+        .status-indicator.success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            border-left-color: #4caf50;
+        }
+        
+        .status-indicator.error {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #c62828;
+            border-left-color: #f44336;
+        }
+        
+        .status-indicator.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #ef6c00;
+            border-left-color: #ff9800;
+        }
+        
+        .progress-indicator {
+            display: none;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .pulse-loader {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+        
+        .sf-link-container {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .sf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sf-link:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        .logs-section {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .logs-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logs-title {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+        
+        .toggle-logs {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .toggle-logs:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .logs-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .logs-container.expanded {
+            display: block;
+        }
+        
+        .logs-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .logs-container::-webkit-scrollbar-track {
+            background: #2d2d30;
+            border-radius: 4px;
+        }
+        
+        .logs-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+        
+        .log-timestamp {
+            color: #9cdcfe;
+            font-weight: normal;
+        }
+        
+        .log-level {
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin: 0 8px;
+            text-transform: uppercase;
+        }
+        
+        .log-level.info {
+            background: #0e639c;
+            color: #ffffff;
+        }
+        
+        .log-level.success {
+            background: #14a085;
+            color: #ffffff;
+        }
+        
+        .log-level.error {
+            background: #f14c4c;
+            color: #ffffff;
+        }
+        
+        .log-level.warning {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+        
+        .log-message {
+            color: #d4d4d4;
+        }
+        
+        .test-phase {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #2196f3;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 20px 10px; }
+            .form-grid { grid-template-columns: 1fr; gap: 20px; }
+            .btn { width: 100%; margin: 5px 0; }
+            .header h1 { font-size: 2rem; }
+            .header { padding: 30px 20px; }
+            .form-section, .status-content { padding: 25px 20px; }
+            .button-section { padding: 25px 20px; }
+            .file-type-options { flex-direction: column; }
+            .file-type-option { min-width: auto; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DLP TEST AUTOMATION</h1>
+            <p>Salesforce Build Organization Test Suite</p>
+            <a href="/json-generator" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5,3H7V5H5V10A2,2 0 0,1 3,8H1V6H3A2,2 0 0,0 5,4V3M19,3V4A2,2 0 0,0 21,6H23V8H21A2,2 0 0,1 19,10V5H17V3H19M12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15M19,21V20A2,2 0 0,0 21,18H23V16H21A2,2 0 0,1 19,14V19H17V21H19M5,21H7V19H5V14A2,2 0 0,1 3,16H1V18H3A2,2 0 0,0 5,20V21Z"/>
+                </svg>
+                Create JSON
+            </a>
+        </div>
+        
+        <div class="main-card">
+            <div class="auth-info-section">
+                <div class="auth-info-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
+                    </svg>
+                    API Mode - Direct Salesforce REST API
+                </div>
+                <div class="auth-info-content">
+                    No browser automation required. Fast and reliable API calls using JWT authentication.
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">Create Loaded File and Launch</h2>
+                
+                <div class="file-type-section">
+                    <div class="file-type-title">Select File Type:</div>
+                    <div class="file-type-options">
+                        <div class="file-type-option selected" onclick="selectFileType('json')">
+                            <input type="radio" name="fileType" value="json" class="file-type-radio" checked>
+                            <label class="file-type-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M5,3H7V5H5V10A2,2 0 0,1 3,8H1V6H3A2,2 0 0,0 5,4V3M19,3V4A2,2 0 0,0 21,6H23V8H21A2,2 0 0,1 19,10V5H17V3H19M12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15M19,21V20A2,2 0 0,0 21,18H23V16H21A2,2 0 0,1 19,14V19H17V21H19M5,21H7V19H5V14A2,2 0 0,1 3,16H1V18H3A2,2 0 0,0 5,20V21Z"/>
+                                </svg>
+                                JSON File
+                            </label>
+                        </div>
+                        <div class="file-type-option" onclick="selectFileType('excel')">
+                            <input type="radio" name="fileType" value="excel" class="file-type-radio">
+                            <label class="file-type-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                                Excel File
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group" id="jsonFileGroup">
+                        <label class="form-label">JSON File (Required):</label>
+                        <div class="file-input-group">
+                            <input type="file" class="file-input" id="jsonFile" accept=".json" onchange="handleFileSelect('json')">
+                            <label for="jsonFile" class="file-input-label" id="jsonFileLabel">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M5,3H7V5H5V10A2,2 0 0,1 3,8H1V6H3A2,2 0 0,0 5,4V3M19,3V4A2,2 0 0,0 21,6H23V8H21A2,2 0 0,1 19,10V5H17V3H19M12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15M19,21V20A2,2 0 0,0 21,18H23V16H21A2,2 0 0,1 19,14V19H17V21H19M5,21H7V19H5V14A2,2 0 0,1 3,16H1V18H3A2,2 0 0,0 5,20V21Z"/>
+                                </svg>
+                                <span>Select JSON file</span>
+                            </label>
+                        </div>
+                        <div class="file-input-info">Standard JSON format with test data structure</div>
+                    </div>
+                    
+                    <div class="form-group" id="excelFileGroup" style="display: none;">
+                        <label class="form-label">Excel File (Required):</label>
+                        <div class="file-input-group">
+                            <input type="file" class="file-input" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect('excel')">
+                            <label for="excelFile" class="file-input-label" id="excelFileLabel">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                                <span>Select Excel file</span>
+                            </label>
+                        </div>
+                        <div class="file-input-info excel-info">
+                            <strong>Excel Format Requirements:</strong><br>
+                            • Use only the <strong>first column (Column A)</strong><br>
+                            • Each cell must contain <strong>valid JSON data</strong><br>
+                            • Empty cells will be skipped
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Loaded File Name (Optional):</label>
+                        <input type="text" class="form-input optional" id="loadedFileName" placeholder="Leave empty for auto-generated name">
+                        <small style="color: #6c757d; margin-top: 5px;">If empty, will use: API Test + timestamp</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Interface Name (Required):</label>
+                        <select class="form-select required" id="interfaceName" required>
+                            <option value="">Select an interface...</option>
+                            <option value="CAP_BN_CI_INTERFACE">CAP_BN_CI_INTERFACE</option>
+                            <option value="CAP_UN_CI_INTERFACE">CAP_UN_CI_INTERFACE</option>
+                            <option value="CAP_YOU_CI_INTERFACE">CAP_YOU_CI_INTERFACE</option>
+                            <option value="FORSTA_CAP_INTERFACE">FORSTA_CAP_INTERFACE</option>
+                            <option value="MCSF_EVENT_BOUNCE_INTERFACE">MCSF_EVENT_BOUNCE_INTERFACE</option>
+                            <option value="MCSF_EVENT_CLICK_INTERFACE">MCSF_EVENT_CLICK_INTERFACE</option>
+                            <option value="MCSF_EVENT_COMPLAINT_INTERFACE">MCSF_EVENT_COMPLAINT_INTERFACE</option>
+                            <option value="MCSF_EVENT_OPEN_INTERFACE">MCSF_EVENT_OPEN_INTERFACE</option>
+                            <option value="MCSF_EVENT_SENT_INTERFACE">MCSF_EVENT_SENT_INTERFACE</option>
+                            <option value="MCSF_EVENT_SOFTBOUNCE_INTERFACE">MCSF_EVENT_SOFTBOUNCE_INTERFACE</option>
+                            <option value="MCSF_EVENT_UNSUBSCRIPTION_INTERFACE">MCSF_EVENT_UNSUBSCRIPTION_INTERFACE</option>
+                            <option value="OISF_ARS_INTERFACE">OISF_ARS_INTERFACE</option>
+                            <option value="OISF_CONSENTS_INTERFACE">OISF_CONSENTS_INTERFACE</option>
+                            <option value="OISF_EVENT_INTERFACE">OISF_EVENT_INTERFACE</option>
+                            <option value="QFSF_QUALIFIO_INTERFACE">QFSF_QUALIFIO_INTERFACE</option>
+                            <option value="TWSF_TRAVEL_WISH_COMPONENT_INTERFACE">TWSF_TRAVEL_WISH_COMPONENT_INTERFACE</option>
+                            <option value="TWSF_TRAVEL_WISH_INTERFACE">TWSF_TRAVEL_WISH_INTERFACE</option>
+                            <option value="TXSF_BOOKING_INTERFACE">TXSF_BOOKING_INTERFACE</option>
+                            <option value="WASF_ANNUAL_INTERFACE">WASF_ANNUAL_INTERFACE</option>
+                            <option value="WASF_TICKET_INTERFACE">WASF_TICKET_INTERFACE</option>
+                            <option value="WASF_VISIT_INTERFACE">WASF_VISIT_INTERFACE</option>
+                            <option value="YOSF_DLPANDYOU_INTERFACE">YOSF_DLPANDYOU_INTERFACE</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-section">
+                <button type="button" class="btn btn-primary" id="runButton" onclick="runTest()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Submit and Run Test
+                </button>
+                <button type="button" class="btn btn-warning" onclick="resetStatus()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 12a8 8 0 018-8V0l4 4-4 4V4a8 8 0 11-8 8z"/>
+                    </svg>
+                    Reset
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-section">
+            <div class="status-header">Test Execution Status</div>
+            <div class="status-content">
+                <div id="status" class="status-indicator info">
+                    Ready to execute DLP test automation
+                </div>
+                
+                <div class="progress-indicator" id="progressIndicator">
+                    <div class="pulse-loader"></div>
+                    <p style="color: #6c757d; font-size: 0.9rem;">Test execution in progress...</p>
+                </div>
+                
+                <div class="sf-link-container" id="sfLinkContainer">
+                    <a id="sfLink" class="sf-link" href="#" target="_blank">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        View in Salesforce
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="logs-section">
+            <div class="logs-header">
+                <div class="logs-title">Detailed Execution Logs</div>
+                <button class="toggle-logs" onclick="toggleLogs()">
+                    <span id="toggleText">Show Logs</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" id="toggleIcon">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="logs-container" id="logs">
+                <div class="log-entry">
+                    <span class="log-timestamp">[READY]</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">DLP Test Automation Suite ready for execution</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let pollInterval;
+        let selectedFileData = null;
+        let selectedFileType = 'json';
+        let currentSessionId = null;
+        
+        function selectFileType(type) {
+            selectedFileType = type;
+            
+            document.querySelectorAll('input[name="fileType"]').forEach(radio => {
+                radio.checked = radio.value === type;
+            });
+            
+            document.querySelectorAll('.file-type-option').forEach(option => {
+                option.classList.toggle('selected', option.onclick.toString().includes(type));
+            });
+            
+            const jsonGroup = document.getElementById('jsonFileGroup');
+            const excelGroup = document.getElementById('excelFileGroup');
+            
+            if (type === 'json') {
+                jsonGroup.style.display = 'block';
+                excelGroup.style.display = 'none';
+                document.getElementById('excelFile').value = '';
+                document.getElementById('excelFileLabel').classList.remove('has-file');
+                document.getElementById('excelFileLabel').querySelector('span').textContent = 'Select Excel file';
+            } else {
+                jsonGroup.style.display = 'none';
+                excelGroup.style.display = 'block';
+                document.getElementById('jsonFile').value = '';
+                document.getElementById('jsonFileLabel').classList.remove('has-file');
+                document.getElementById('jsonFileLabel').querySelector('span').textContent = 'Select JSON file';
+            }
+            
+            selectedFileData = null;
+        }
+        
+        function handleFileSelect(fileType) {
+            let fileInput, label;
+            
+            if (fileType === 'json') {
+                fileInput = document.getElementById('jsonFile');
+                label = document.getElementById('jsonFileLabel');
+            } else {
+                fileInput = document.getElementById('excelFile');
+                label = document.getElementById('excelFileLabel');
+            }
+            
+            const file = fileInput.files[0];
+            
+            if (file) {
+                if (fileType === 'json') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            selectedFileData = JSON.parse(e.target.result);
+                            label.classList.add('has-file');
+                            label.querySelector('span').textContent = file.name;
+                        } catch (error) {
+                            alert('Invalid JSON file.');
+                            fileInput.value = '';
+                            selectedFileData = null;
+                            label.classList.remove('has-file');
+                            label.querySelector('span').textContent = 'Select JSON file';
+                        }
+                    };
+                    reader.readAsText(file);
+                } else {
+                    selectedFileData = file;
+                    label.classList.add('has-file');
+                    label.querySelector('span').textContent = file.name;
+                }
+            } else {
+                selectedFileData = null;
+                label.classList.remove('has-file');
+                label.querySelector('span').textContent = fileType === 'json' ? 'Select JSON file' : 'Select Excel file';
+            }
+        }
+        
+        function validateForm() {
+            if (!selectedFileData) {
+                alert(`Please select a ${selectedFileType.toUpperCase()} file`);
+                return false;
+            }
+            if (!document.getElementById('interfaceName').value.trim()) {
+                alert('Please select an Interface Name');
+                return false;
+            }
+            return true;
+        }
+        
+        async function runTest() {
+            if (!validateForm()) return;
+            
+            const runButton = document.getElementById('runButton');
+            const statusDiv = document.getElementById('status');
+            const progressIndicator = document.getElementById('progressIndicator');
+            
+            runButton.disabled = true;
+            statusDiv.className = 'status-indicator info';
+            statusDiv.textContent = 'Initializing DLP test automation...';
+            progressIndicator.style.display = 'block';
+            document.getElementById('sfLinkContainer').style.display = 'none';
+            
+            try {
+                const formData = new FormData();
+                formData.append('interfaceName', document.getElementById('interfaceName').value.trim());
+                formData.append('fileType', selectedFileType);
+                
+                const loadedFileName = document.getElementById('loadedFileName').value.trim();
+                if (loadedFileName) {
+                    formData.append('loadedFileName', loadedFileName);
+                }
+                
+                if (selectedFileType === 'json') {
+                    const jsonBlob = new Blob([JSON.stringify(selectedFileData, null, 2)], {type: 'application/json'});
+                    formData.append('jsonFile', jsonBlob, 'data.json');
+                } else {
+                    formData.append('excelFile', selectedFileData);
+                }
+                
+                const response = await fetch('/run-test', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.className = 'status-indicator success';
+                    statusDiv.textContent = result.message;
+                    currentSessionId = result.session_id;
+                    startPolling(result.session_id);
+                } else {
+                    statusDiv.className = 'status-indicator error';
+                    statusDiv.textContent = 'Failed to start test: ' + result.error;
+                    resetButton();
+                }
+            } catch (error) {
+                statusDiv.className = 'status-indicator error';
+                statusDiv.textContent = 'Connection error: ' + error.message;
+                resetButton();
+            }
+        }
+        
+        function startPolling(sessionId) {
+            pollInterval = setInterval(() => refreshStatus(sessionId), 2000);
+        }
+        
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+        
+        async function refreshStatus(sessionId) {
+            try {
+                const response = await fetch(`/status/${sessionId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        stopPolling();
+                        resetButton();
+                        return;
+                    }
+                    throw new Error(`Status check failed: ${response.status}`);
+                }
+                
+                const status = await response.json();
+                updateLogs(status.logs);
+                
+                if (status.loaded_file && status.loaded_file.view_url) {
+                    document.getElementById('sfLink').href = status.loaded_file.view_url;
+                    document.getElementById('sfLinkContainer').style.display = 'block';
+                }
+                
+                const statusDiv = document.getElementById('status');
+                const progressIndicator = document.getElementById('progressIndicator');
+                
+                if (!status.running && status.logs && status.logs.length > 0) {
+                    stopPolling();
+                    resetButton();
+                    progressIndicator.style.display = 'none';
+                    
+                    if (status.success) {
+                        statusDiv.className = 'status-indicator success';
+                        statusDiv.textContent = 'DLP test automation completed successfully';
+                    } else {
+                        statusDiv.className = 'status-indicator error';
+                        statusDiv.textContent = 'Test failed. Check logs for details.';
+                    }
+                } else if (status.running) {
+                    statusDiv.className = 'status-indicator info';
+                    statusDiv.textContent = 'Executing API workflow...';
+                    progressIndicator.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Status check failed:', error);
+            }
+        }
+        
+        function updateLogs(logs) {
+            if (!logs || logs.length === 0) return;
+            
+            const logContainer = document.getElementById('logs');
+            let html = '';
+            
+            logs.forEach(log => {
+                if (!log || log.toString().trim() === '') return;
+                
+                let message = log.toString();
+                
+                if (message.includes('[') && message.includes(']') && message.includes(':')) {
+                    const timestampMatch = message.match(/\[([^\]]+)\]/);
+                    const levelMatch = message.match(/\] ([A-Z]+): /);
+                    
+                    if (timestampMatch && levelMatch) {
+                        const timestamp = timestampMatch[1];
+                        const level = levelMatch[1].toLowerCase();
+                        const logMessage = message.split(': ').slice(1).join(': ');
+                        
+                        if (logMessage.includes('STEP') || logMessage.includes('🎯') || logMessage.includes('🚀') || logMessage.includes('✅') || logMessage.includes('===')) {
+                            html += `<div class="test-phase">${logMessage}</div>`;
+                        } else {
+                            html += `
+                                <div class="log-entry">
+                                    <span class="log-timestamp">[${timestamp}]</span>
+                                    <span class="log-level ${level}">${level.toUpperCase()}</span>
+                                    <span class="log-message">${logMessage}</span>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html += `<div class="log-entry"><span class="log-message">${message}</span></div>`;
+                    }
+                } else {
+                    html += `<div class="log-entry"><span class="log-message">${message}</span></div>`;
+                }
+            });
+            
+            logContainer.innerHTML = html;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function resetButton() {
+            document.getElementById('runButton').disabled = false;
+            document.getElementById('progressIndicator').style.display = 'none';
+        }
+        
+        async function resetStatus() {
+            stopPolling();
+            
+            document.getElementById('status').className = 'status-indicator info';
+            document.getElementById('status').textContent = 'Ready to execute DLP test automation';
+            document.getElementById('progressIndicator').style.display = 'none';
+            document.getElementById('sfLinkContainer').style.display = 'none';
+            document.getElementById('logs').innerHTML = `
+                <div class="log-entry">
+                    <span class="log-timestamp">[READY]</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">DLP Test Automation Suite ready for execution</span>
+                </div>
+            `;
+            
+            resetButton();
+            
+            if (currentSessionId) {
+                try { await fetch(`/reset/${currentSessionId}`, { method: 'POST' }); } catch (e) {}
+                currentSessionId = null;
+            }
+        }
+        
+        function toggleLogs() {
+            const logsContainer = document.getElementById('logs');
+            const toggleText = document.getElementById('toggleText');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (logsContainer.classList.contains('expanded')) {
+                logsContainer.classList.remove('expanded');
+                toggleText.textContent = 'Show Logs';
+                toggleIcon.innerHTML = '<path d="M6 9l6 6 6-6"/>';
+            } else {
+                logsContainer.classList.add('expanded');
+                toggleText.textContent = 'Hide Logs';
+                toggleIcon.innerHTML = '<path d="M18 15l-6-6-6 6"/>';
+            }
+        }
+        
+        function hideAuthInfo() {
+            const authSection = document.querySelector('.auth-info-section');
+            if (authSection) {
+                authSection.classList.add('hiding');
+                setTimeout(() => authSection.remove(), 600);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            selectFileType('json');
+            setTimeout(hideAuthInfo, 4000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+/.env
+/certificate.crt
+/test_oauth.py
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+venv/
